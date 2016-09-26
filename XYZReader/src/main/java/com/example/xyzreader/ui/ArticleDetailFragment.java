@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -30,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+
+import java.lang.reflect.Field;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +57,7 @@ public class ArticleDetailFragment extends Fragment implements
     @BindView(R.id.share_fab) FloatingActionButton shareFab;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.backdrop) ImageView backdrop;
+    @BindView(R.id.article_title) TextView title;
 
     private ColorDrawable mStatusBarColorDrawable;
 
@@ -125,6 +129,10 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
+        // Let's blank the Toolbar title since we cannot guarantee that putting a full title
+        // here will actually display fully in the Toolbar.
+        toolbar.setTitle(null);
+
         mStatusBarColorDrawable = new ColorDrawable(0);
 
         bindViews();
@@ -159,7 +167,7 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
 
-            toolbar.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
+            title.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
@@ -190,7 +198,7 @@ public class ArticleDetailFragment extends Fragment implements
                     });
         } else {
             mRootView.setVisibility(View.GONE);
-            toolbar.setTitle("N/A");
+            title.setText("N/A");
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
         }
